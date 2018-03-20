@@ -1,0 +1,3 @@
+rootProject.name = 'kumparan_mobile'
+
+include ':app'
