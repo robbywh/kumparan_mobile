@@ -8,6 +8,8 @@ import thunk from 'redux-thunk';
 // NAVIGATION
 import { createReactNavigationReduxMiddleware } from 'react-navigation-redux-helpers';
 import { NavigatorTab } from '../components/tabBar/navigationConfiguration';
+// REDUCERS
+import { articleReducer } from 'kumparan_mobile/app/reducers/ArticleReducer';
 
 const NavMiddleware = createReactNavigationReduxMiddleware(
   "root",
@@ -17,7 +19,8 @@ let middleware = [thunk, NavMiddleware]
 
 export default createStore(
   combineReducers({
-    tabBar: (state,action) => NavigatorTab.router.getStateForAction(action,state)
+    tabBar: (state,action) => NavigatorTab.router.getStateForAction(action,state),
+    article: articleReducer
   }),
   applyMiddleware(...middleware)
 )
