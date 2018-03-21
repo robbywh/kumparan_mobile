@@ -1,5 +1,9 @@
 export default {
   BLACK: '#5d6d7e',
   GREEN_TOSCA: '#2ED1A2',
-  WHITE: '#FFFFFF'
+  LIGHT_GREEN: '#81e4c6',
+  DARK_GREEN: '#24a880',
+  VERY_LIGHT_GREEN: '#d5f6ec',
+  WHITE: '#FFFFFF',
+  WHITE_TRANSPARENT: 'rgba(255,255,255,0.15)'
 }
