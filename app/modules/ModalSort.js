@@ -20,7 +20,8 @@ export default class ModalSort extends Component {
     title:'',
     visible:false,
     currentValue:'',
-    onPressList:() => {}
+    onPressList:() => {},
+    onClose:() => {}
   }
 
   constructor(props) {
@@ -30,7 +31,8 @@ export default class ModalSort extends Component {
       title: this.props.title,
       visible: this.props.visible,
       currentValue: this.props.currentValue,
-      onPressList: this.props.onPressList
+      onPressList: this.props.onPressList,
+      onClose: this.props.onClose
     }
   }
 
@@ -74,7 +76,8 @@ export default class ModalSort extends Component {
             <StackHeader
               leftType={'close'}
               onPressLeft={() => {
-                this.setState({visible:false})
+                this.state.onClose();
+                this.setState({visible:false});
               }}
               title={this.state.title}/>
               <View style={{paddingLeft:20, paddingRight:20}}>

@@ -171,6 +171,7 @@ class ListArticlesView extends Component<Props> {
              currentValue={this.state.currentSort}
              visible={this.state.showSort}
              title={'SORT'}
+             onClose={() => this.setState({showSort:false})}
              onPressList={(sortOrder) => this._sort(sortOrder)}
            />
            <View style={styles.headerSearch}>
