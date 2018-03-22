@@ -33,6 +33,8 @@ export const articleReducer = (state = initialState, action) => {
       return {
         ...state,
         isRequest:false,
+        q: action.q,
+        sort: action.sort,
         data: getArticleData(state, action),
         page: action.page
       }
