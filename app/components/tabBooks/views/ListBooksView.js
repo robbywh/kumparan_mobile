@@ -13,6 +13,7 @@ import {
 import { getBooksList } from 'kumparan_mobile/app/actions/BookActions';
 // MODULES
 import Image from 'kumparan_mobile/app/modules/ImageKumparan';
+import LoadingComponent from 'kumparan_mobile/app/modules/LoadingComponent';
 // NACHOS-UI
 import { Spinner, Switcher, SegmentedControlButton } from 'nachos-ui';
 // REDUX
@@ -26,9 +27,11 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import dismissKeyboard from 'dismissKeyboard';
 
 const mapStateToProps = (state) => {
-  var {offset, data, list, isRequest} = state.book || {offset:0, data:[], list:'e-book-fiction', isRequest:false};
+  var {requestType, offset, data, list, isRequest} = state.book ||
+    {requestType:'init', offset:0, data:[], list:'e-book-fiction', isRequest:false};
 
   return {
+    requestType,
     offset,
     data,
     list,
@@ -41,10 +44,14 @@ class ListBooksView extends Component<Props> {
   constructor(props) {
     super(props);
     this.state = {
+      requestType: this.props.requestType,
       offset: this.props.offset,
       data: this.props.data,
       list: this.props.list,
-      isRequest: this.props.isRequest
+      isRequest: this.props.isRequest,
+      refreshing: false,
+      endReached: false,
+      lastPage: false,
     }
   }
 
@@ -64,16 +71,41 @@ class ListBooksView extends Component<Props> {
   _keyExtractor = (item, index) => index.toString();
 
   _getBooksListData(onSuccess, onError) {
-    const { dispatch } = this.props.navigation;
-    let params = {
-      list:this.state.list || 'e-book-fiction',
-      offset:this.state.offset || 0
+    setTimeout(() => {
+      const { dispatch } = this.props.navigation;
+      let params = {
+        list:this.state.list,
+        offset:this.state.offset,
+        requestType: this.state.requestType
+      }
+      dispatch(getBooksList(params, (data) => {
+        if(onSuccess != undefined) onSuccess(data)
+      }, () => {
+        if(onError != undefined) onError()
+      }));
+    },10)
+  }
+
+  _onEndReached() {
+     this.setState({endReached: true});
+     if(!this.state.lastPage) {
+       this.setState({offset:this.state.offset + 20, requestType:'end'})
+       this._getBooksListData((data) => {
+         if(data.length <=0) this.setState({lastPage:true})
+         this.setState({endReached: false});
+       });
+     } else {
+       this.setState({endReached: false});
+     }
+  }
+
+  _onRefresh() {
+    if(!this.state.refreshing) {
+      this.setState({page: 0, refreshing: true, requestType:'pull'});
+      this._getBooksListData(() => {
+        this.setState({refreshing: false});
+      })
     }
-    dispatch(getBooksList(params, () => {
-      if(onSuccess != undefined) onSuccess()
-    }, () => {
-      if(onError != undefined) onError()
-    }));
   }
 
   _renderItem = ({item, index}) => {
@@ -100,7 +132,7 @@ class ListBooksView extends Component<Props> {
               style={[styles.containerSearch, {width:deviceWidth-40}]}
               onChange={list => {
                 setTimeout(() => {
-                  this.setState({ list, offset:0 });
+                  this.setState({ list, offset:0, requestType:'init' });
                   this._getBooksListData();
                 },10)
               }}
@@ -111,7 +143,7 @@ class ListBooksView extends Component<Props> {
           </View>
           <View style={styles.container}>
           {
-            this.state.isRequest ? <Spinner color={Color.GREEN_TOSCA}/> :
+            this.state.isRequest && this.state.requestType == "init" ? <Spinner color={Color.GREEN_TOSCA}/> :
             <FlatList
               data={this.state.data}
               extraData={this.state}
@@ -120,6 +152,13 @@ class ListBooksView extends Component<Props> {
               showsVerticalScrollIndicator={false}
               removeClippedSubviews={false}
               enableEmptySections={true}
+              refreshing={this.state.refreshing}
+              onRefresh={!this.state.refreshing ? () => this._onRefresh() : () => {}}
+              onEndReachedThreshold={0.5}
+              onEndReached={() => !this.state.endReached && !this.state.lastPage ? this._onEndReached() : () => {}}
+              ListFooterComponent={() => this.state.endReached && !this.state.noEndReached ?
+               <View style={styles.containerFooter}><LoadingComponent/></View> :
+               <View/>}
               ItemSeparatorComponent={() => <View style={styles.separator}/>}
             />
           }
@@ -158,6 +197,12 @@ const styles = StyleSheet.create({
     paddingLeft: 15,
     paddingRight: 15,
     alignItems: 'center'
+  },
+  containerFooter: {
+    paddingTop:20,
+    paddingBottom:20,
+    borderColor:Color.VERY_LIGHT_GREEN,
+    borderTopWidth:1
   }
 });
 

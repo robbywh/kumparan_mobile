@@ -28,9 +28,10 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import dismissKeyboard from 'dismissKeyboard';
 
 const mapStateToProps = (state) => {
-  var {q, sort, page, data, isRequest } = state.article ||
-    { q:"", sort:"newest", page:0, data:[], isRequest:true }
+  var {requestType, q, sort, page, data, isRequest } = state.article ||
+    { requestType:"init", q:"", sort:"newest", page:0, data:[], isRequest:true }
   return {
+    requestType,
     q,
     sort,
     page,
@@ -57,9 +58,11 @@ class ListArticlesView extends Component<Props> {
         type:"oldest",
         name:"Oldest"
       }],
-      currentSort:'',
-      refreshing:false,
-      onEndReached:false
+      currentSort:'newest',
+      requestType: this.props.requestType,
+      refreshing: false,
+      endReached: false,
+      lastPage: false,
     }
   }
 
@@ -68,17 +71,20 @@ class ListArticlesView extends Component<Props> {
   }
 
   _getArticlesListData(onSuccess, onError) {
-    const { dispatch } = this.props.navigation;
-    let params = {
-      q:this.state.q,
-      sort:this.state.sort,
-      page:this.state.page
-    }
-    dispatch(getArticlesList(params, () => {
-      if(onSuccess != undefined) onSuccess()
-    }, () => {
-      if(onError != undefined) onError()
-    }));
+    setTimeout(() => {
+      const { dispatch } = this.props.navigation;
+      let params = {
+        q:this.state.q,
+        sort:this.state.sort,
+        page:this.state.page,
+        requestType:this.state.requestType
+      }
+      dispatch(getArticlesList(params, (data) => {
+        if(onSuccess != undefined) onSuccess(data)
+      }, () => {
+        if(onError != undefined) onError()
+      }));
+    }, 10);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -94,10 +100,13 @@ class ListArticlesView extends Component<Props> {
   _keyExtractor = (item, index) => item._id;
 
   _onSubmitEditing() {
-    this.setState({page:0})
-    this._getArticlesListData(params, () => {
-      this.setState({q:""})
+    this.setState({page:0, requestType:'init'})
+    this._getArticlesListData(() => {
+      this.setState({failed:false})
+    }, () => {
+      this.setState({failed:true})
     });
+    dismissKeyboard();
   }
 
   _renderItem = ({item}) => {
@@ -126,16 +135,32 @@ class ListArticlesView extends Component<Props> {
   }
 
   _onEndReached() {
-    alert("end")
+     this.setState({endReached: true});
+     if(!this.state.lastPage) {
+       this.setState({page:this.state.page + 1, requestType:'end'})
+       this._getArticlesListData((data) => {
+         if(data.length <= 0) this.setState({lastPage:true})
+         this.setState({endReached: false});
+       });
+     } else {
+       this.setState({endReached: false});
+     }
   }
 
   _onRefresh() {
-    alert("refresh")
+    if(!this.state.refreshing) {
+      this.setState({page: 0, refreshing: true, requestType:'pull'});
+      this._getArticlesListData(() => {
+        this.setState({refreshing: false});
+      })
+    }
   }
 
   _sort(sortOrder) {
-    this.setState({showSort:false, sort:sortOrder, page:0})
-    this._getArticlesListData();
+    this.setState({showSort:false, sort:sortOrder, page:0, requestType:'init'})
+    this._getArticlesListData(() => {
+      this.setState({currentSort:sortOrder});
+    });
   }
 
   render() {
@@ -177,21 +202,22 @@ class ListArticlesView extends Component<Props> {
           </View>
           <View style={styles.container}>
             {
-              this.state.isRequest ? <Spinner color={Color.GREEN_TOSCA}/> :
+              this.state.isRequest && this.state.requestType == "init" ? <Spinner color={Color.GREEN_TOSCA}/> :
               <FlatList
                 data={this.state.data}
                 extraData={this.state}
                 keyExtractor={this._keyExtractor}
                 renderItem={this._renderItem}
                 showsVerticalScrollIndicator={false}
-                refreshing={this.state.refreshing}
-                onRefresh={() => this.state._onRefresh()}
                 removeClippedSubviews={false}
                 enableEmptySections={true}
-                onEndReached={() => !this.state.endReached ? this._onEndReached() : () => {}}
-                ListFooterComponent={() => !this.state.endReached ?
-                  <View style={styles.containerFooter}><LoadingComponent/></View> :
-                  <View style={styles.containerFooter}/>}
+                refreshing={this.state.refreshing}
+                onRefresh={!this.state.refreshing ? () => this._onRefresh() : () => {}}
+                onEndReachedThreshold={0.5}
+                onEndReached={() => !this.state.endReached && !this.state.lastPage ? this._onEndReached() : () => {}}
+                ListFooterComponent={() => this.state.endReached && !this.state.noEndReached ?
+                 <View style={styles.containerFooter}><LoadingComponent/></View> :
+                 <View/>}
                 ItemSeparatorComponent={() => <View style={styles.separator}/>}
               />
             }
