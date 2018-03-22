@@ -7,6 +7,12 @@ import { getListBooksApi } from 'kumparan_mobile/app/utils/KumparanApi';
 // OTHERS
 import axios from 'axios';
 
+const initialFilter = (obj) => ({
+  "list": obj.list || "e-book-fiction",
+  "offset": obj.offset || 0
+})
+
+
 export const getBooksListError = () => ({
   type: ActionTypes.GET_BOOKS_LIST_ERROR
 })
@@ -15,17 +21,19 @@ export const getBooksListRequest = () => ({
   type: ActionTypes.GET_BOOKS_LIST_REQUEST
 })
 
-export const getBooksListSuccess = (list, data) => ({
+export const getBooksListSuccess = (list, offset, data) => ({
   type: ActionTypes.GET_BOOKS_LIST_SUCCESS,
   list,
+  offset,
   data
 })
 
-export const getBooksList = (list, onSuccess, onError) => {
+export const getBooksList = (obj, onSuccess, onError) => {
   return (dispatch) => {
+    let params = initialFilter(obj);
     dispatch(getBooksListRequest());
     return axios({
-      url:getListBooksApi(list),
+      url:getListBooksApi(params),
       method:'GET',
       responseType:'json',
       timeout:Constants.TIMEOUT
@@ -33,7 +41,7 @@ export const getBooksList = (list, onSuccess, onError) => {
     .then(json => {
       let responseData = json.data;
       if(responseData.status == "OK") {
-        dispatch(getBooksListSuccess(list, responseData.results));
+        dispatch(getBooksListSuccess(params.list, params.offset, responseData.results));
         if(onSuccess != undefined) onSuccess()
       } else {
         dispatch(getBooksListError());
