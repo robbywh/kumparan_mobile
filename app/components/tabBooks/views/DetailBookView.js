@@ -27,8 +27,7 @@ export default class DetailBookView extends Component<Props> {
     this.state = {
       book_details: this.props.navigation.state.params.book_details || []
     }
-
-  };
+  }
 
   render() {
     return (
