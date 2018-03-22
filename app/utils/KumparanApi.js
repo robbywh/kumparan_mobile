@@ -8,6 +8,6 @@ export const getListArticlesApi = (params) => {
 }
 
 
-export const getListBooksApi = (list) => {
-  return `https://api.nytimes.com/svc/books/v3/lists.json?api-key=${Constants.API_KEY}&list=${list}`;
+export const getListBooksApi = (params) => {
+  return `https://api.nytimes.com/svc/books/v3/lists.json?api-key=${Constants.API_KEY}&list=${params.list}&offset=${params.offset}`;
 }
