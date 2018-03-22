@@ -1,8 +1,9 @@
 export default {
   BLACK: '#5d6d7e',
+  DARK_BLACK: '#000000',
+  DARK_GREEN: '#24a880',
   GREEN_TOSCA: '#2ED1A2',
   LIGHT_GREEN: '#81e4c6',
-  DARK_GREEN: '#24a880',
   VERY_LIGHT_GREEN: '#d5f6ec',
   WHITE: '#FFFFFF',
   WHITE_TRANSPARENT: 'rgba(255,255,255,0.15)'
