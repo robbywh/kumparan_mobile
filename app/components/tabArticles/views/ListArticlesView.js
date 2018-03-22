@@ -97,7 +97,7 @@ class ListArticlesView extends Component<Props> {
     })
   }
 
-  _keyExtractor = (item, index) => item._id;
+  _keyExtractor = (item, index) => index.toString();
 
   _onSubmitEditing() {
     this.setState({page:0, requestType:'init'})
