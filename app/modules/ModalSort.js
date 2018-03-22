@@ -52,7 +52,7 @@ export default class ModalSort extends Component {
           <View style={{flex:0.5}} >
             {
               item.type == this.state.currentValue  ?
-              <Ionicons name='md-checkmark' size={25} style={[styles.iconCheckmark, {textAlign:"right"}]}/>
+              <Icon name='md-checkmark' size={25} style={[styles.iconCheckmark, {textAlign:"right"}]}/>
               : <View/>
             }
           </View>
