@@ -78,7 +78,7 @@ class ListBooksView extends Component<Props> {
 
   _renderItem = ({item, index}) => {
     return (
-      <View key={index} style={{flexDirection:'row', width:deviceWidth, padding:20}}>
+      <TouchableOpacity onPress={() => this.props.navigation.navigate('DetailBookView', {book_details:item.book_details})} key={index} style={{flexDirection:'row', width:deviceWidth, padding:20}}>
         <View style={{flex:4, paddingLeft:10}}>
           <Text style={{fontSize:12}}>{item.list_name}</Text>
           <Text style={{color:Color.DARK_BLACK}}>{item.book_details.length > 0 ? item.book_details[0].title : "NO TITLE"}</Text>
@@ -87,7 +87,7 @@ class ListBooksView extends Component<Props> {
         <View style={{flex:1, justifyContent:'center', alignItems:'flex-end'}}>
           <Icon name="ios-arrow-forward-outline" size={25} color={Color.GREEN_TOSCA}/>
         </View>
-      </View>
+      </TouchableOpacity>
     )
   }
 
