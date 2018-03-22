@@ -4,9 +4,6 @@ import Icon from 'react-native-vector-icons/Ionicons';
 // UTILS
 import Color from 'kumparan_mobile/app/utils/Color'
 
-// VIEWS
-import ListArticlesView from '../tabArticles/views/ListArticlesView';
-
 const navigateOnce = (getStateForAction) => (action, state) => {
   const {type, routeName} = action;
   return (
@@ -15,6 +12,33 @@ const navigateOnce = (getStateForAction) => (action, state) => {
     routeName === state.routes[state.routes.length - 1].routeName
   ) ? state : getStateForAction(action, state);
 };
+
+// =================================================================================
+// TAB ARTICLES
+// =================================================================================
+import ListArticlesView from '../tabArticles/views/ListArticlesView';
+import DetailArticleView from '../tabArticles/views/DetailArticleView';
+
+const NavigatorTabArticles = StackNavigator({
+  DetailArticleView: {
+    screen: DetailArticleView,
+    navigationOptions: {
+      tabBarVisible:false
+    }
+  },
+  ListArticlesView: {
+     screen: ListArticlesView,
+     navigationOptions: {
+       header: null
+     }
+   },
+}, {
+  headerMode: 'screen',
+  mode: 'card',
+  initialRouteName: 'ListArticlesView'
+})
+
+NavigatorTabArticles.router.getStateForAction = navigateOnce(NavigatorTabArticles.router.getStateForAction);
 
 // =================================================================================
 // TAB BOOKS
@@ -49,7 +73,7 @@ NavigatorTabBooks.router.getStateForAction = navigateOnce(NavigatorTabBooks.rout
 
 const routeConfiguration = {
   TabArticlesNavigation: {
-    screen: ListArticlesView,
+    screen: NavigatorTabArticles,
     navigationOptions: {
       tabBarLabel: 'Articles',
       tabBarIcon: ({ focused }) => {
