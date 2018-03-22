@@ -3,7 +3,8 @@ import * as ActionTypes from 'kumparan_mobile/app/actions/ActionTypes';
 const initialState = {
   q: '',
   sort: 'newest',
-  data: []
+  data: [],
+  isRequest: false
 }
 
 const getArticleData = (state, action) => {
