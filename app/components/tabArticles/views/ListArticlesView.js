@@ -110,7 +110,7 @@ class ListArticlesView extends Component<Props> {
         resizeMode={'cover'}/>
     }
     return (
-      <View key={item._id} style={{flexDirection:'row', width:deviceWidth, padding:20}}>
+      <TouchableOpacity onPress={() => this.props.navigation.navigate('DetailArticleView', {web_url:item.web_url})} key={item._id} style={{flexDirection:'row', width:deviceWidth, padding:20}}>
         <View style={{flex:1, justifyContent:'center', alignItems:'center'}}>
           {image}
         </View>
@@ -121,7 +121,7 @@ class ListArticlesView extends Component<Props> {
         <View style={{flex:1, justifyContent:'center', alignItems:'flex-end'}}>
           <Icon name="ios-arrow-forward-outline" size={25} color={Color.GREEN_TOSCA}/>
         </View>
-      </View>
+      </TouchableOpacity>
     )
   }
 
