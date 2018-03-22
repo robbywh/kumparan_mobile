@@ -2,7 +2,8 @@ import * as ActionTypes from 'kumparan_mobile/app/actions/ActionTypes';
 
 const initialState = {
   list: 'e-book-fiction',
-  data: []
+  data: [],
+  isRequest: false
 }
 
 export const bookReducer = (state = initialState, action) => {
