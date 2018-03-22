@@ -119,6 +119,7 @@ const styles = StyleSheet.create({
     flexDirection:'row',
     justifyContent:'center',
     backgroundColor:Color.VERY_LIGHT_GREEN,
+    borderBottomWidth:1,
     borderColor:Color.GREEN_TOSCA
   },
   icBack: {
