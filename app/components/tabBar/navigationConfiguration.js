@@ -77,7 +77,7 @@ const routeConfiguration = {
     navigationOptions: {
       tabBarLabel: 'Articles',
       tabBarIcon: ({ focused }) => {
-        return focused ? <Icon name="md-paper" size={25} color={Color.DARK_GREEN}/> : <Icon name="md-paper" size={25} color={Color.GREEN_TOSCA}/>
+        return focused ? <Icon name="md-paper" size={25} color={Color.DARK_GREEN}/> : <Icon name="md-paper" size={25} color={Color.LIGHT_GREEN}/>
       }
     }
   },
@@ -86,7 +86,7 @@ const routeConfiguration = {
     navigationOptions: {
       tabBarLabel: 'Books',
       tabBarIcon: ({ focused }) => {
-        return focused ? <Icon name="md-book" size={25} color={Color.DARK_GREEN}/> : <Icon name="md-book" size={25} color={Color.GREEN_TOSCA}/>
+        return focused ? <Icon name="md-book" size={25} color={Color.DARK_GREEN}/> : <Icon name="md-book" size={25} color={Color.LIGHT_GREEN}/>
       }
     }
   }
@@ -98,8 +98,9 @@ const tabBarConfiguration = {
   tabBarPosition: 'bottom',
   tabBarOptions: {
     activeTintColor: Color.DARK_GREEN,
-    inactiveTintColor: Color.GREEN_TOSCA,
+    inactiveTintColor: Color.LIGHT_GREEN,
     tabStyle: {borderTopWidth:1, borderColor:Color.LIGHT_GREEN, backgroundColor:Color.WHITE},
+    style: {backgroundColor:Color.WHITE},
     labelStyle: {fontWeight:'bold', fontSize:12}
   }
 }
