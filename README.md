@@ -26,8 +26,6 @@ react-native run-ios
 ```
 
 ### To Run Testing
-
-Execute testing script below __tests__ folder.
 ```
 npm test
 ```
