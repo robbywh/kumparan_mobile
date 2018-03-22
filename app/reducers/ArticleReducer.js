@@ -3,6 +3,7 @@ import * as ActionTypes from 'kumparan_mobile/app/actions/ActionTypes';
 const initialState = {
   q: '',
   sort: 'newest',
+  requestType: 'init',
   data: [],
   isRequest: false
 }
@@ -36,7 +37,8 @@ export const articleReducer = (state = initialState, action) => {
         q: action.q,
         sort: action.sort,
         data: getArticleData(state, action),
-        page: action.page
+        page: action.page,
+        requestType: action.requestType
       }
     default:
       return state;

@@ -2,9 +2,22 @@ import * as ActionTypes from 'kumparan_mobile/app/actions/ActionTypes';
 
 const initialState = {
   list: 'e-book-fiction',
+  requestType: 'init',
+  offset: 0,
   data: [],
   isRequest: false
 }
+
+const getBookData = (state, action) => {
+  let data;
+  if(action.offset > 0) {
+    data = state.data.concat(action.data);
+  } else {
+    data = action.data;
+  }
+  return data;
+}
+
 
 export const bookReducer = (state = initialState, action) => {
   switch (action.type) {
@@ -22,8 +35,9 @@ export const bookReducer = (state = initialState, action) => {
       return {
         ...state,
         isRequest:false,
-        data: action.data,
-        page: action.page
+        data: getBookData(state, action),
+        offset: action.offset,
+        requestType: action.requestType
       }
     default:
       return state;
