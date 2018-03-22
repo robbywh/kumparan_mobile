@@ -9,7 +9,8 @@ import axios from 'axios';
 
 const initialFilter = (obj) => ({
   "list": obj.list || "e-book-fiction",
-  "offset": obj.offset || 0
+  "offset": obj.offset || 0,
+  "requestType": obj.requestType || "init"
 })
 
 
@@ -21,10 +22,11 @@ export const getBooksListRequest = () => ({
   type: ActionTypes.GET_BOOKS_LIST_REQUEST
 })
 
-export const getBooksListSuccess = (list, offset, data) => ({
+export const getBooksListSuccess = (list, offset, requestType, data) => ({
   type: ActionTypes.GET_BOOKS_LIST_SUCCESS,
   list,
   offset,
+  requestType,
   data
 })
 
@@ -41,8 +43,8 @@ export const getBooksList = (obj, onSuccess, onError) => {
     .then(json => {
       let responseData = json.data;
       if(responseData.status == "OK") {
-        dispatch(getBooksListSuccess(params.list, params.offset, responseData.results));
-        if(onSuccess != undefined) onSuccess()
+        dispatch(getBooksListSuccess(params.list, params.offset, params.requestType, responseData.results));
+        if(onSuccess != undefined) onSuccess(responseData.results)
       } else {
         dispatch(getBooksListError());
         console.log("Error getBooksList");

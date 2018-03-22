@@ -10,7 +10,8 @@ import axios from 'axios';
 const initialFilter = (obj) => ({
   "q": obj.q || "",
   "sort": obj.sort || "newest",
-  "page": obj.page || 0
+  "page": obj.page || 0,
+  "requestType": obj.requestType || "init"
 })
 
 export const getArticlesListError = () => ({
@@ -21,8 +22,9 @@ export const getArticlesListRequest = () => ({
   type: ActionTypes.GET_ARTICLES_LIST_REQUEST
 })
 
-export const getArticlesListSuccess = (q, sort, page, data) => ({
+export const getArticlesListSuccess = (requestType, q, sort, page, data) => ({
   type: ActionTypes.GET_ARTICLES_LIST_SUCCESS,
+  requestType,
   q,
   sort,
   page,
@@ -42,8 +44,8 @@ export const getArticlesList = (obj, onSuccess, onError) => {
     .then(json => {
       let responseData = json.data;
       if(responseData.status == "OK") {
-        dispatch(getArticlesListSuccess(params.q, params.sort, params.page, responseData.response.docs));
-        if(onSuccess != undefined) onSuccess()
+        dispatch(getArticlesListSuccess(params.requestType, params.q, params.sort, params.page, responseData.response.docs));
+        if(onSuccess != undefined) onSuccess(responseData.response.docs)
       } else {
         dispatch(getArticlesListError());
         console.log("Error getArticlesList");
